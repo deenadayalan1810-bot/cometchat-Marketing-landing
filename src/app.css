@@ -1,0 +1,97 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-brand-dark text-brand-text font-body;
+  }
+
+  /* Font-weight shorthands used throughout components */
+  .font-600 { font-weight: 600; }
+  .font-700 { font-weight: 700; }
+  .font-800 { font-weight: 800; }
+
+  ::selection {
+    background-color: rgba(124, 92, 252, 0.35);
+    color: #fff;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0A0A0F; }
+  ::-webkit-scrollbar-thumb { background: #1E1E2E; border-radius: 3px; }
+
+  img { display: block; max-width: 100%; }
+}
+
+@layer components {
+  /* â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .btn-primary {
+    @apply inline-flex items-center gap-2
+           bg-brand-purple hover:bg-brand-violet
+           text-white font-body font-medium
+           px-5 py-2.5 rounded-[10px]
+           transition-all duration-200 text-sm
+           shadow-[0_8px_24px_rgba(111,91,255,0.28)]
+           hover:shadow-[0_10px_30px_rgba(111,91,255,0.4)];
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2
+           border border-brand-border hover:border-brand-purple/70
+           text-brand-subtext hover:text-white
+           font-body font-medium
+           px-5 py-2.5 rounded-[10px]
+           transition-all duration-200 text-sm
+           bg-transparent hover:bg-white/[0.02];
+  }
+
+  /* â”€â”€ Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .card-surface {
+    @apply bg-brand-card border border-brand-border rounded-xl;
+  }
+
+  /* â”€â”€ Section eyebrow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .section-label {
+    @apply inline-flex items-center gap-2
+           text-brand-purple text-xs
+           font-mono font-medium
+           uppercase tracking-widest;
+  }
+  /* â”€â”€ Gradient heading text â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .gradient-text {
+    @apply bg-gradient-to-r from-white via-brand-violet to-brand-purple
+           bg-clip-text text-transparent;
+  }
+
+  /* â”€â”€ Subtle noise texture overlay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .noise-overlay::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; border-radius: inherit;
+  }
+
+  /* â”€â”€ Glow orb helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+  .glow-orb {
+    @apply absolute rounded-full pointer-events-none blur-3xl;
+  }
+}
+
+@layer utilities {
+  .animate-delay-100 { animation-delay: 100ms; }
+  .animate-delay-200 { animation-delay: 200ms; }
+  .animate-delay-300 { animation-delay: 300ms; }
+  .animate-delay-400 { animation-delay: 400ms; }
+  .animate-delay-500 { animation-delay: 500ms; }
+}

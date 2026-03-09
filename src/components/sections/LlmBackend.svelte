@@ -1,0 +1,63 @@
+﻿<script>
+  import LlmImage from '../../assets/images/llm-backend-architecture.png'
+  import SolidIcon from '../../assets/images/Solid.png'
+  
+  const points = [
+    'A complete frontend and system layer for Ai agents.Plug in your LLM backend or build the brain with ours.',
+    'CometChat is the only full stack agent platform that combine logic,UL,moderation, notification, and insights-without glue code.',
+    'Each of these is battle-tested , used and tusted in production by real companies, across real user scenarios.',
+    ]
+</script>
+
+<section id="llm-backend" class="relative min-h-[90vh] flex items-center
+                pt-14 pb-16 md:pt-16 md:pb-24
+                px-4 sm:px-6 lg:px-8 overflow-hidden"
+         aria-labelledby="llm-backend-heading">
+
+  <!-- Hero glow -->
+  <div class="absolute inset-0 bg-hero-glow pointer-events-none" aria-hidden="true"></div>
+  <div class="glow-orb top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2
+              w-[600px] h-[600px] bg-brand-purple/10"
+       aria-hidden="true"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto mt-10">
+    <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+
+      <!-- â”€â”€ Left: Copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+      <div class="flex-1 text-center lg:text-left max-w-xl mx-auto lg:mx-0">
+
+
+        <h2 id="llm-backend-heading"
+            class="font-display font-400 text-white leading-[1.08]
+                   text-3xl sm:text-5xl lg:text-[3.75rem] mb-5">
+                   Everything you'd end up <span class="gradient-text">already done</span> 
+        </h2>
+        <ul class="space-y-3">
+          {#each points as point}
+            <li class="flex items-start gap-3">
+              <img src={SolidIcon} alt="" loading="lazy" decoding="async" width="16" height="16" class="w-4 h-4 mt-1 shrink-0" aria-hidden="true" />
+              <p class="text-brand-subtext text-sm leading-relaxed">{point}</p>
+            </li>
+          {/each}
+        </ul>
+      
+      </div>
+
+      <!-- â”€â”€ Right: Chat mockup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+      <div class="flex-1 w-full max-w-sm sm:max-w-md lg:max-w-[420px] mx-auto lg:mx-0 lg:ml-auto">
+        <div class="relative animate-float">
+          <img
+             src={LlmImage}
+             alt="AI backend architecture preview"
+             loading="lazy"
+             decoding="async"
+             width="1000"
+             height="740"
+             class="w-full max-w-[500px] abject-contain"
+          />
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

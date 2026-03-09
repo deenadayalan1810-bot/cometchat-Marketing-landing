@@ -1,0 +1,77 @@
+﻿<script>
+  import AiImg from '../../assets/images/multichannel-notifications.png'
+  import SolidIcon from '../../assets/images/Solid.png'
+  import SectionLabel   from '../ui/SectionLabel.svelte'
+
+  const points = [
+    'Native push, email, and SMS support.',
+    'Retry logic, delivery tracking, and batching.',
+    'Trigger-based delivery (user actions, model replies, etc.)',
+    'Works seamlessly with Slack, WhatsApp, webhooks, and more.',
+    'Unified messaging + proactive outreach.'
+    ]
+</script>
+
+<section id="notifications" class="relative min-h-[90vh] flex items-center
+                pt-14 pb-16 md:pt-16 md:pb-24
+                px-4 sm:px-6 lg:px-8 overflow-hidden"
+         aria-labelledby="notifications-heading">
+
+  <!-- Hero glow -->
+  <div class="absolute inset-0 bg-hero-glow pointer-events-none" aria-hidden="true"></div>
+  <div class="glow-orb top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2
+              w-[600px] h-[600px] bg-brand-purple/10"
+       aria-hidden="true"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto mt-10">
+    <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+
+      <!-- â”€â”€ Left: Copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+      <div class="flex-1 text-center lg:text-left max-w-xl mx-auto lg:mx-0">
+
+        <SectionLabel centered={true} className="mb-4 block">Multichannel notifications engines</SectionLabel>
+        <h2 id="notifications-heading"
+            class="font-400 text-white leading-[1.08]
+                   text-xl sm:text-5xl lg:text-[2.50rem] mb-5">
+                   Your agent is only helpful if people come back to talk to it.
+        </h2>
+        <p class="text-brand-subtext text-base sm:text-lg leading-relaxed
+                  mb-4 max-w-[480px] mx-auto lg:mx-0">
+          Most agents get dhosted. Yours won't.
+        </p>
+        <ul class="space-y-3">
+          {#each points as point}
+            <li class="flex items-start gap-3">
+              <img src={SolidIcon} alt="" loading="lazy" decoding="async" width="16" height="16" class="w-4 h-4 mt-1 shrink-0" aria-hidden="true" />
+              <p class="text-brand-subtext text-sm leading-relaxed">{point}</p>
+            </li>
+          {/each}
+        </ul>
+        <p class="text-brand-subtext text-base sm:text-lg leading-relaxed
+                  mt-4 max-w-[480px] mx-auto lg:mx-0">
+          Notifications arenâ€™t a growth hack. Theyâ€™re UX. And we built them to grow with you.
+        </p>
+      
+      </div>
+
+      <!-- â”€â”€ Right: Chat mockup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+      <div class="flex-1 w-full max-w-sm sm:max-w-md lg:max-w-[420px] mx-auto lg:mx-0 lg:ml-auto">
+        <div class="relative animate-float">
+          <img
+             src={AiImg}
+             alt="Multi-channel notification and messaging stack preview"
+             loading="lazy"
+             decoding="async"
+             width="1000"
+             height="740"
+             class="w-full max-w-[500px] abject-contain"
+          />
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+      

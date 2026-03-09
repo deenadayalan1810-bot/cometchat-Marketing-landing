@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CometChat – Ship the Agent. Skip the Plumbing.</title>
+<meta name="description" content="CometChat gives you the full-stack AI agent platform — chat UI, notifications, LLM routing, analytics, and more. Production-ready infrastructure for AI agents."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+img{display:block;max-width:100%}
+a{text-decoration:none}
+ul,ol{list-style:none}
+
+:root {
+  --c-purple:  #7C5CFC;
+  --c-violet:  #9B7DFF;
+  --c-dark:    #0A0A0F;
+  --c-surface: #111118;
+  --c-card:    #16161F;
+  --c-border:  #1E1E2E;
+  --c-muted:   #6B6B8A;
+  --c-text:    #E2E2F0;
+  --c-sub:     #9999BB;
+  --f-display: 'Syne', sans-serif;
+  --f-body:    'DM Sans', sans-serif;
+  --f-mono:    'JetBrains Mono', monospace;
+}
+
+body {
+  background: var(--c-dark);
+  color: var(--c-text);
+  font-family: var(--f-body);
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+::selection { background: rgba(124,92,252,.35); color: #fff; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--c-dark); }
+::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 3px; }
+
+/* ═══════════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════════ */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section    { padding: 80px 0; }
+.section-sm { padding: 60px 0; }
+
+/* ═══════════════════════════════════════════════════
+   TYPOGRAPHY
+═══════════════════════════════════════════════════ */
+.disp      { font-family: var(--f-display); }
+.mono      { font-family: var(--f-mono); }
+.text-muted  { color: var(--c-muted); }
+.text-sub    { color: var(--c-sub); }
+.text-white  { color: #fff; }
+.text-purple { color: var(--c-purple); }
+.text-violet { color: var(--c-violet); }
+
+.gradient-text {
+  background: linear-gradient(135deg, #ffffff 0%, #9B7DFF 45%, #7C5CFC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ═══════════════════════════════════════════════════
+   REUSABLE COMPONENTS
+═══════════════════════════════════════════════════ */
+
+/* Card */
+.card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+}
+
+/* Eyebrow label */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--c-purple);
+  font-family: var(--f-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+}
+.eyebrow::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--c-purple);
+  flex-shrink: 0;
+}
+.eyebrow-center { display: flex; justify-content: center; }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: 14px;
+  border-radius: 8px;
+  padding: 11px 22px;
+  cursor: pointer;
+  border: none;
+  transition: background .18s, border-color .18s, color .18s, transform .15s, box-shadow .18s;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--c-purple);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(124,92,252,.3);
+}
+.btn-primary:hover { background: var(--c-violet); box-shadow: 0 8px 28px rgba(124,92,252,.45); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--c-sub);
+  border: 1px solid var(--c-border);
+}
+.btn-outline:hover { border-color: rgba(124,92,252,.55); color: #fff; }
+
+/* Check item */
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.check-dot {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(124,92,252,.14);
+  border: 1px solid rgba(124,92,252,.24);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.check-dot svg { display: block; }
+.check-text { color: var(--c-sub); font-size: 13.5px; line-height: 1.7; }
+.check-list { display: flex; flex-direction: column; gap: 14px; }
+
+/* Section heading block */
+.section-head { text-align: center; margin-bottom: 56px; }
+.section-head h2 { margin: 12px auto 10px; }
+.section-head p  { max-width: 500px; margin: 0 auto; }
+
+h2 {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(26px, 3.2vw, 40px);
+  color: #fff;
+  line-height: 1.15;
+}
+h3 {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+p { color: var(--c-sub); font-size: 13.5px; line-height: 1.75; }
+
+/* Two-column layouts */
+.two-col       { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.two-col-left  { display: grid; grid-template-columns: 270px 1fr; gap: 56px; align-items: start; }
+
+/* Animations */
+@keyframes float    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+@keyframes pulse-a  { 0%,100%{opacity:1} 50%{opacity:.25} }
+.float  { animation: float 6s ease-in-out infinite; }
+.pulse  { animation: pulse-a 3s ease-in-out infinite; }
+
+/* Glow helper */
+.glow {
+  position: absolute; border-radius: 50%;
+  pointer-events: none; filter: blur(60px);
+}
+
+/* ═══════════════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════════════ */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 56px;
+  background: rgba(10,10,15,.88);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(30,30,46,.5);
+}
+.navbar-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  height: 100%;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.logo-wrap {
+  display: flex; align-items: center; gap: 9px;
+  flex-shrink: 0;
+}
+.logo-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--c-purple);
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-text {
+  font-family: var(--f-display);
+  font-weight: 700; font-size: 13.5px;
+  color: #fff; letter-spacing: -.02em;
+}
+.nav-links {
+  display: flex; align-items: center; gap: 2px;
+  flex: 1; justify-content: center;
+}
+.nav-links a {
+  color: var(--c-sub); font-size: 13.5px;
+  padding: 6px 14px; border-radius: 6px;
+  transition: color .15s, background .15s;
+}
+.nav-links a:hover { color: #fff; background: rgba(255,255,255,.05); }
+.nav-cta { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
+.nav-login { color: var(--c-sub); font-size: 13.5px; transition: color .15s; }
+.nav-login:hover { color: #fff; }
+.btn-nav { padding: 7px 16px; font-size: 12.5px; border-radius: 7px; }
+
+/* ═══════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 56px 0 60px;
+  overflow: hidden;
+}
+.hero-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% -5%, rgba(124,92,252,.28) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-orb {
+  width: 700px; height: 700px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -55%);
+  background: rgba(124,92,252,.08);
+}
+.hero-inner {
+  display: flex; align-items: center; gap: 56px;
+  position: relative; z-index: 1;
+}
+.hero-copy { flex: 1; max-width: 520px; }
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid rgba(124,92,252,.3);
+  background: rgba(124,92,252,.1);
+  color: var(--c-violet);
+  font-family: var(--f-mono); font-size: 10.5px;
+  margin-bottom: 22px; letter-spacing: .04em;
+}
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-violet); flex-shrink: 0; }
+
+.hero h1 {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(36px, 5.2vw, 60px);
+  color: #fff;
+  line-height: 1.08;
+  margin-bottom: 20px;
+}
+.hero-sub {
+  color: var(--c-sub);
+  font-size: 16px; line-height: 1.7;
+  max-width: 460px;
+  margin-bottom: 30px;
+}
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-trust { margin-top: 22px; color: var(--c-muted); font-size: 12px; }
+.hero-trust strong { color: #fff; font-weight: 600; }
+
+/* Chat mockup */
+.hero-mockup { flex: 1; display: flex; justify-content: flex-end; position: relative; }
+.chat-wrap { position: relative; max-width: 360px; width: 100%; }
+.chat-card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+}
+.chat-header {
+  display: flex; align-items: center; gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--c-border);
+}
+.chat-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--c-purple);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 11px; font-weight: 700;
+  flex-shrink: 0;
+}
+.chat-info-name  { color: #fff; font-size: 13.5px; font-weight: 600; line-height: 1.2; }
+.chat-info-status {
+  display: flex; align-items: center; gap: 5px;
+  color: #4ade80; font-size: 11px; margin-top: 2px;
+}
+.chat-info-status::before {
+  content: ''; width: 6px; height: 6px;
+  border-radius: 50%; background: #4ade80;
+}
+.chat-msgs { display: flex; flex-direction: column; gap: 10px; padding: 14px 0 10px; }
+.msg-row      { display: flex; gap: 8px; align-items: flex-end; }
+.msg-row-user { justify-content: flex-end; }
+.msg-icon {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(124,92,252,.2);
+  border: 1px solid rgba(124,92,252,.3);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.bubble-agent {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 14px 14px 14px 2px;
+  padding: 8px 13px;
+  font-size: 13px; color: var(--c-text);
+  max-width: 220px; line-height: 1.5;
+}
+.bubble-user {
+  background: rgba(124,92,252,.2);
+  border: 1px solid rgba(124,92,252,.25);
+  border-radius: 14px 14px 2px 14px;
+  padding: 8px 13px;
+  font-size: 13px; color: #fff;
+  max-width: 220px; line-height: 1.5;
+}
+.chat-input {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  margin-top: 6px;
+}
+.chat-input span { color: var(--c-muted); font-size: 12px; flex: 1; }
+.send-btn {
+  width: 24px; height: 24px;
+  background: var(--c-purple); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; cursor: pointer; flex-shrink: 0;
+  transition: background .15s;
+}
+.send-btn:hover { background: var(--c-violet); }
+
+.float-badge {
+  position: absolute;
+  background: var(--c-card);
+  border: 1px solid rgba(30,30,46,.9);
+  border-radius: 8px;
+  padding: 7px 13px;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.55);
+  font-size: 12px; font-weight: 600; color: #fff;
+  white-space: nowrap;
+}
+.float-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c-purple); }
+
+/* ═══════════════════════════════════════════════════
+   LOGOS STRIP
+═══════════════════════════════════════════════════ */
+.logos-strip {
+  border-top: 1px solid rgba(30,30,46,.4);
+  border-bottom: 1px solid rgba(30,30,46,.4);
+  background: rgba(17,17,24,.25);
+  padding: 36px 0;
+}
+.logos-label {
+  text-align: center;
+  color: rgba(107,107,138,.65);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .2em;
+  margin-bottom: 24px;
+}
+.logos-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 48px;
+}
+.logo-name {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: rgba(107,107,138,.55);
+  letter-spacing: -.02em;
+  transition: color .2s;
+  cursor: default;
+}
+.logo-name:hover { color: var(--c-sub); }
+
+/* ═══════════════════════════════════════════════════
+   FEATURES
+═══════════════════════════════════════════════════ */
+.feat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.feat-card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: border-color .2s;
+}
+.feat-card:hover { border-color: rgba(124,92,252,.4); }
+.feat-icon {
+  width: 40px; height: 40px; border-radius: 8px;
+  background: rgba(124,92,252,.1);
+  border: 1px solid rgba(124,92,252,.2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--c-violet);
+  margin-bottom: 14px;
+  transition: background .2s;
+}
+.feat-card:hover .feat-icon { background: rgba(124,92,252,.2); }
+
+.already-block { margin-top: 80px; padding-top: 64px; border-top: 1px solid rgba(30,30,46,.6); }
+.check-row-box {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px;
+  background: rgba(17,17,24,.5);
+  border: 1px solid rgba(30,30,46,.5);
+  border-radius: 10px;
+  transition: border-color .15s;
+}
+.check-row-box:hover { border-color: var(--c-border); }
+.skeleton-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.skeleton-row {
+  height: 32px; border-radius: 6px;
+  background: var(--c-surface);
+  border: 1px solid rgba(30,30,46,.5);
+  display: flex; align-items: center; padding: 0 10px; gap: 8px;
+}
+.skel-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(124,92,252,.38); flex-shrink: 0; }
+.skel-bar { height: 5px; background: rgba(30,30,46,.7); border-radius: 2px; flex: 1; }
+
+/* ═══════════════════════════════════════════════════
+   PLATFORM OVERVIEW
+═══════════════════════════════════════════════════ */
+.platform-section { background: rgba(17,17,24,.3); }
+.platform-bullets { display: flex; flex-direction: column; gap: 16px; }
+.platform-bullet  { display: flex; gap: 12px; align-items: flex-start; }
+.bullet-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-purple); flex-shrink: 0; margin-top: 8px; }
+
+.plat-mockup { background: var(--c-card); border: 1px solid var(--c-border); border-radius: 12px; padding: 14px; box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+.tab-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.tab-chip {
+  padding: 4px 10px; border-radius: 6px;
+  color: #fff; font-size: 11px; font-weight: 600;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.plat-chat-win {
+  background: var(--c-dark);
+  border: 1px solid var(--c-border);
+  border-radius: 8px; overflow: hidden;
+}
+.plat-chat-head {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--c-border);
+  display: flex; align-items: center; gap: 10px;
+}
+.plat-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(124,92,252,.3);
+  border: 1px solid rgba(124,92,252,.4);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.plat-name   { color: #fff; font-size: 12px; font-weight: 600; }
+.plat-active { color: #4ade80; font-size: 10px; margin-top: 1px; }
+.plat-msgs { padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 110px; }
+.pm-row      { display: flex; gap: 8px; align-items: flex-end; }
+.pm-row-user { justify-content: flex-end; }
+.pm-av  { width: 18px; height: 18px; border-radius: 50%; background: rgba(124,92,252,.3); flex-shrink: 0; }
+.pm-bub-a {
+  background: var(--c-surface); border: 1px solid var(--c-border);
+  border-radius: 9px 9px 9px 2px; padding: 6px 10px;
+  font-size: 12px; color: var(--c-text); max-width: 200px; line-height: 1.5;
+}
+.pm-bub-u {
+  background: rgba(124,92,252,.15); border: 1px solid rgba(124,92,252,.2);
+  border-radius: 9px 9px 2px 9px; padding: 6px 10px;
+  font-size: 12px; color: #fff; max-width: 200px; line-height: 1.5;
+}
+.infra-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.infra-pill {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 12px;
+  background: var(--c-surface);
+  border: 1px solid rgba(30,30,46,.6);
+  border-radius: 8px;
+}
+.infra-pip { width: 5px; height: 5px; border-radius: 50%; background: var(--c-purple); flex-shrink: 0; }
+.infra-pill span { color: var(--c-sub); font-size: 12px; }
+
+/* ═══════════════════════════════════════════════════
+   NOTIFICATIONS
+═══════════════════════════════════════════════════ */
+.ch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ch-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  transition: border-color .15s;
+}
+.ch-item:hover { border-color: rgba(124,92,252,.3); }
+.ch-emoji { font-size: 18px; line-height: 1; }
+.ch-name  { color: #fff; font-size: 13.5px; font-weight: 600; }
+
+.bar-chart  { display: flex; align-items: flex-end; gap: 3px; height: 76px; margin-top: 20px; padding: 0 2px; }
+.bar        { flex: 1; border-radius: 2px 2px 0 0; }
+.day-labels { display: flex; justify-content: space-between; margin-top: 7px; padding: 0 2px; }
+.day-labels span { color: rgba(107,107,138,.55); font-size: 10px; }
+
+/* ═══════════════════════════════════════════════════
+   ANALYTICS / INTEGRATIONS
+═══════════════════════════════════════════════════ */
+.integrations-section { background: rgba(17,17,24,.22); }
+.stats-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.stat-tile {
+  background: var(--c-surface);
+  border: 1px solid rgba(30,30,46,.8);
+  border-radius: 10px; padding: 12px;
+}
+.stat-label  { color: var(--c-muted); font-family: var(--f-mono); font-size: 10.5px; margin-bottom: 4px; }
+.stat-val    { font-family: var(--f-display); font-weight: 700; font-size: 22px; color: #fff; line-height: 1.1; }
+.stat-change { color: #4ade80; font-size: 11px; margin-top: 3px; }
+
+.chart-area { height: 80px; position: relative; }
+.chart-area svg { width: 100%; height: 100%; display: block; }
+
+.int-grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 10px; }
+.int-tile {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 10px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 14px 8px; gap: 8px;
+  transition: border-color .15s;
+  cursor: default;
+}
+.int-tile:hover { border-color: rgba(124,92,252,.35); }
+.int-initial {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(124,92,252,.1);
+  border: 1px solid var(--c-border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--f-mono); font-size: 11.5px; font-weight: 700;
+  color: var(--c-violet);
+  transition: background .15s;
+}
+.int-tile:hover .int-initial { background: rgba(124,92,252,.2); }
+.int-name { color: rgba(153,153,187,.75); font-size: 10.5px; font-weight: 600; text-align: center; line-height: 1.3; }
+
+/* ═══════════════════════════════════════════════════
+   PLUG IN YOUR LOGIC (INSIGHTS)
+═══════════════════════════════════════════════════ */
+.insights-banner {
+  position: relative;
+  border-radius: 16px; overflow: hidden;
+  border: 1px solid var(--c-border);
+  background: var(--c-card);
+  padding: 64px 32px;
+  text-align: center;
+}
+.banner-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(124,92,252,.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.banner-orb {
+  position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 400px; height: 400px;
+  background: rgba(124,92,252,.14);
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+}
+.banner-icon {
+  width: 64px; height: 64px; border-radius: 16px;
+  background: rgba(124,92,252,.2);
+  border: 1px solid rgba(124,92,252,.3);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 28px;
+  position: relative; z-index: 1;
+}
+.banner-content { position: relative; z-index: 1; }
+.banner-content h2 { font-size: clamp(30px, 4vw, 48px); max-width: 500px; margin: 0 auto 14px; }
+.banner-content p  { max-width: 380px; margin: 0 auto; font-size: 15px; }
+
+.path-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 640px; margin: 36px auto 0; text-align: left; }
+.path-card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 12px; padding: 24px;
+  transition: border-color .2s;
+}
+.path-card:hover { border-color: rgba(124,92,252,.4); }
+.path-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: rgba(124,92,252,.12);
+  border: 1px solid rgba(124,92,252,.24);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 14px;
+}
+.path-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.path-item { display: flex; gap: 8px; align-items: flex-start; }
+.path-arrow { color: var(--c-purple); font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.path-item span { color: var(--c-sub); font-size: 12px; line-height: 1.6; }
+
+/* ═══════════════════════════════════════════════════
+   DEVELOPER TOOLS
+═══════════════════════════════════════════════════ */
+.dev-section { background: rgba(17,17,24,.22); }
+.code-block {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  overflow-x: auto;
+}
+.code-dots { display: flex; align-items: center; gap: 7px; margin-bottom: 18px; }
+.code-dot { width: 12px; height: 12px; border-radius: 50%; }
+.code-filename { color: var(--c-muted); font-family: var(--f-mono); font-size: 11px; margin-left: 8px; }
+.code-block pre {
+  font-family: var(--f-mono); font-size: 12.5px;
+  line-height: 1.85; color: var(--c-sub);
+  tab-size: 2; white-space: pre;
+}
+
+.tool-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+.tool-card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: 12px; padding: 24px;
+  display: flex; flex-direction: column;
+  transition: border-color .2s;
+}
+.tool-card:hover { border-color: rgba(124,92,252,.4); }
+.tool-link {
+  margin-top: auto; padding-top: 16px;
+  color: var(--c-purple); font-size: 13.5px; font-weight: 600;
+  transition: color .15s;
+}
+.tool-link:hover { color: var(--c-violet); }
+
+/* ═══════════════════════════════════════════════════
+   FINAL CTA
+═══════════════════════════════════════════════════ */
+.cta-wrap { max-width: 800px; margin: 0 auto; }
+.cta-card {
+  position: relative;
+  border-radius: 16px; overflow: hidden;
+  border: 1px solid rgba(30,30,46,.8);
+  background: var(--c-card);
+  text-align: center;
+  padding: 80px 40px;
+}
+.cta-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(124,92,252,.16) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-orb {
+  position: absolute;
+  top: -80px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 600px;
+  background: rgba(124,92,252,.1);
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.cta-logo {
+  position: relative; z-index: 1;
+  width: 60px; height: 60px; border-radius: 16px;
+  background: var(--c-purple);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 28px;
+  box-shadow: 0 12px 36px rgba(124,92,252,.45);
+}
+.cta-card h2 { position: relative; z-index: 1; font-size: clamp(28px, 4.5vw, 48px); max-width: 520px; margin: 0 auto 14px; }
+.cta-card p  { position: relative; z-index: 1; max-width: 460px; margin: 0 auto 36px; font-size: 15px; }
+.cta-btns { position: relative; z-index: 1; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+.btn-cta-p { padding: 14px 32px; font-size: 15px; box-shadow: 0 10px 32px rgba(124,92,252,.42); }
+.btn-cta-o { padding: 14px 32px; font-size: 15px; }
+.trust-row  { position: relative; z-index: 1; display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+.trust-item { display: flex; align-items: center; gap: 7px; color: var(--c-muted); font-size: 12px; }
+
+/* ═══════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════ */
+.footer {
+  border-top: 1px solid rgba(30,30,46,.5);
+  background: rgba(17,17,24,.2);
+  padding: 60px 0 36px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 220px repeat(4, 1fr);
+  gap: 36px;
+  margin-bottom: 48px;
+}
+.footer-logo  { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
+.footer-desc  { color: var(--c-muted); font-size: 12px; line-height: 1.7; max-width: 180px; }
+.footer-socials { display: flex; gap: 8px; margin-top: 18px; }
+.soc-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--c-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--c-muted);
+  font-family: var(--f-mono); font-size: 10px;
+  transition: border-color .15s, color .15s;
+}
+.soc-btn:hover { border-color: rgba(124,92,252,.4); color: #fff; }
+.footer-col h4 {
+  font-family: var(--f-display); font-weight: 600;
+  color: #fff; font-size: 13.5px; margin-bottom: 16px;
+}
+.footer-links { display: flex; flex-direction: column; gap: 11px; }
+.footer-links a { color: var(--c-muted); font-size: 12px; transition: color .15s; }
+.footer-links a:hover { color: var(--c-sub); }
+.footer-bottom {
+  border-top: 1px solid rgba(30,30,46,.5);
+  padding-top: 22px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.footer-copy  { color: var(--c-muted); font-size: 12px; }
+.legal-links  { display: flex; gap: 20px; flex-wrap: wrap; }
+.legal-links a { color: var(--c-muted); font-size: 12px; transition: color .15s; }
+.legal-links a:hover { color: var(--c-sub); }
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE — TABLET ≤1024px
+═══════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .two-col-left { grid-template-columns: 1fr; gap: 40px; }
+  .int-grid      { grid-template-columns: repeat(4,1fr); }
+  .footer-grid   { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE — MOBILE ≤768px
+═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .container { padding: 0 16px; }
+  .section    { padding: 56px 0; }
+
+  /* Navbar */
+  .nav-links,.nav-cta { display: none; }
+
+  /* Hero */
+  .hero { min-height: auto; padding: 72px 0 48px; align-items: flex-start; }
+  .hero-inner { flex-direction: column; gap: 36px; align-items: center; }
+  .hero-copy { text-align: center; max-width: 100%; }
+  .hero-sub   { margin-left: auto; margin-right: auto; max-width: 100%; }
+  .hero-ctas  { justify-content: center; }
+  .hero-ctas .btn { width: 100%; justify-content: center; }
+  .hero-trust { text-align: center; }
+  .hero-mockup { justify-content: center; width: 100%; max-width: 360px; }
+  .hero h1 { font-size: clamp(32px, 8vw, 42px); }
+
+  /* Logos */
+  .logos-row { gap: 10px 28px; }
+
+  /* Grids → single col */
+  .two-col     { grid-template-columns: 1fr; gap: 36px; }
+  .feat-cards  { grid-template-columns: 1fr; }
+  .ch-grid     { grid-template-columns: 1fr 1fr; }
+  .path-cards  { grid-template-columns: 1fr; max-width: 100%; }
+  .tool-cards  { grid-template-columns: 1fr; }
+  .int-grid    { grid-template-columns: repeat(3,1fr); }
+  .skeleton-grid { grid-template-columns: repeat(2,1fr); }
+
+  /* Platform */
+  .section-head h2 { font-size: clamp(22px, 6vw, 32px); }
+
+  /* Insights */
+  .insights-banner { padding: 40px 20px; }
+
+  /* CTA */
+  .cta-card { padding: 48px 24px; }
+  .cta-btns .btn { width: 100%; justify-content: center; }
+  .cta-btns { flex-direction: column; }
+
+  /* Footer */
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .int-grid  { grid-template-columns: repeat(2,1fr); }
+  .stats-2x2 { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .trust-row { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ NAVBAR ═══════════════════════════ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="/" class="logo-wrap" aria-label="CometChat Home">
+      <div class="logo-icon" aria-hidden="true">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <path d="M8 2C4.686 2 2 4.462 2 7.5c0 1.547.677 2.94 1.76 3.93L3 14l2.82-1.18A6.13 6.13 0 0 0 8 13c3.314 0 6-2.462 6-5.5S11.314 2 8 2Z" fill="white"/>
+        </svg>
+      </div>
+      <span class="logo-text">cometchat</span>
+    </a>
+
+    <ul class="nav-links" role="list">
+      <li><a href="#platform">Platform</a></li>
+      <li><a href="#solutions">Solutions</a></li>
+      <li><a href="#developers">Developers</a></li>
+      <li><a href="#resources">Resources</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+
+    <div class="nav-cta">
+      <a href="/login" class="nav-login">Log in</a>
+      <a href="/signup" class="btn btn-primary btn-nav">
+        Start for free
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <path d="M2.5 6h7M7 3.5l2.5 2.5L7 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section class="hero" aria-labelledby="hero-heading">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="glow hero-orb" aria-hidden="true"></div>
+
+  <div class="container" style="width:100%">
+    <div class="hero-inner">
+
+      <!-- Copy -->
+      <div class="hero-copy">
+        <div class="hero-badge">
+          <span class="badge-dot pulse" aria-hidden="true"></span>
+          Full Stack AI Agent Platform
+        </div>
+
+        <h1 id="hero-heading">
+          Ship the agent.<br>
+          <span class="gradient-text">Skip the plumbing.</span>
+        </h1>
+
+        <p class="hero-sub">Why are you still stitching together chat UI, retries, multiplexing, notification pipelines, and analytics? CometChat gives you the extra frontend + infra layer. Simple. Scalable. Production-ready.</p>
+
+        <div class="hero-ctas">
+          <a href="/signup" class="btn btn-primary">
+            Start for free
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2.5 7h9M8.5 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="/demo" class="btn btn-outline">View demo</a>
+        </div>
+
+        <p class="hero-trust">Trusted by <strong>500+</strong> companies in production</p>
+      </div>
+
+      <!-- Mockup -->
+      <div class="hero-mockup">
+        <div class="chat-wrap float">
+          <div class="chat-card">
+            <div class="chat-header">
+              <div class="chat-avatar">AI</div>
+              <div>
+                <div class="chat-info-name">Agent</div>
+                <div class="chat-info-status">Online</div>
+              </div>
+            </div>
+            <div class="chat-msgs">
+              <div class="msg-row">
+                <div class="msg-icon">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                    <path d="M5 1C2.79 1 1 2.686 1 4.75c0 .774.238 1.495.645 2.09L1.25 8.75l2.005-.84A4.072 4.072 0 0 0 5 8.5C7.21 8.5 9 6.814 9 4.75S7.21 1 5 1Z" fill="#7C5CFC"/>
+                  </svg>
+                </div>
+                <div class="bubble-agent">How can I help?</div>
+              </div>
+              <div class="msg-row msg-row-user">
+                <div class="bubble-user">Book a meeting with Sarah tomorrow at 3pm</div>
+              </div>
+              <div class="msg-row">
+                <div class="msg-icon">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                    <path d="M5 1C2.79 1 1 2.686 1 4.75c0 .774.238 1.495.645 2.09L1.25 8.75l2.005-.84A4.072 4.072 0 0 0 5 8.5C7.21 8.5 9 6.814 9 4.75S7.21 1 5 1Z" fill="#7C5CFC"/>
+                  </svg>
+                </div>
+                <div class="bubble-agent">Done! Meeting scheduled for tomorrow at 3 PM with Sarah. ✓</div>
+              </div>
+            </div>
+            <div class="chat-input">
+              <span>Ask anything...</span>
+              <button class="send-btn" aria-label="Send" type="button">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                  <path d="M1.5 5h7M6 2.5l2.5 2.5L6 7.5" stroke="white" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Floating badges -->
+          <div class="float-badge" style="top:-14px;right:-14px">
+            <span class="float-badge-dot pulse" aria-hidden="true"></span>
+            Production-ready
+          </div>
+          <div class="float-badge" style="bottom:-14px;left:-14px">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2 10l3-3 2 2 3-4 2 2" stroke="#7C5CFC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            99.9% uptime
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ LOGOS ═══════════════════════════ -->
+<div class="logos-strip" aria-label="Trusted by companies">
+  <div class="container">
+    <p class="logos-label">Trusted by innovative teams worldwide</p>
+    <ul class="logos-row" role="list">
+      <li class="logo-name">FALEON</li>
+      <li class="logo-name">Kahoot!</li>
+      <li class="logo-name">stulla.com</li>
+      <li class="logo-name">endeavor</li>
+      <li class="logo-name">NOOM</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ FEATURES ═══════════════════════════ -->
+<section class="section" aria-labelledby="features-heading">
+  <div class="container">
+
+    <!-- Block 1: Feature cards -->
+    <div class="two-col-left">
+      <div>
+        <span class="eyebrow" style="margin-bottom:16px;display:flex">Everything you need</span>
+        <h2 id="features-heading">Everything your agent needs to go from prototype to product — <span class="gradient-text">fixed.</span></h2>
+        <p style="margin-top:14px">Particular ways you want control — AI visibility when you just need to launch.</p>
+      </div>
+      <div class="feat-cards">
+        <article class="feat-card">
+          <div class="feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5Z" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M7 9h6M7 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Instant capabilities</h3>
+          <p>Drop-in UI for chat, voice, video, and agents — built and battle-tested.</p>
+        </article>
+        <article class="feat-card">
+          <div class="feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 8v4l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Your AI, your logic</h3>
+          <p>Plug in any LLM or agent brain. We wire the plumbing so you own the intelligence.</p>
+        </article>
+        <article class="feat-card">
+          <div class="feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M3 3v18h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M7 14l4-4 3 3 4-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Real-time insights</h3>
+          <p>Understand agent performance, user sentiment, and conversation quality at scale.</p>
+        </article>
+        <article class="feat-card">
+          <div class="feat-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 2L3 7v10l9 5 9-5V7l-9-5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Trusted in production</h3>
+          <p>Battle-tested by real companies across real user scenarios worldwide.</p>
+        </article>
+      </div>
+    </div>
+
+    <!-- Block 2: Already done -->
+    <div class="already-block">
+      <div class="two-col-left">
+        <div>
+          <span class="eyebrow" style="margin-bottom:16px;display:flex">Already done</span>
+          <h2>Everything you'd end up already doing.</h2>
+          <p style="margin-top:14px">A complete frontend and system layer for AI agents. Plug in your LLM backend or build the brain with ours.</p>
+        </div>
+        <div>
+          <div class="check-list" style="margin-bottom:16px">
+            <div class="check-row-box">
+              <div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="check-text">A complete frontend and system layer for AI agents</span>
+            </div>
+            <div class="check-row-box">
+              <div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="check-text">Plug in your LLM backend or build the brain with ours</span>
+            </div>
+            <div class="check-row-box">
+              <div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="check-text">CometChat is the only full-stack agent platform combining real-time data and LLM features — without glue code</span>
+            </div>
+            <div class="check-row-box">
+              <div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="check-text">Each of these is battle-tested by real companies, across real user scenarios</span>
+            </div>
+          </div>
+          <!-- Skeleton UI preview -->
+          <div class="card" style="padding:14px;position:relative;overflow:hidden" aria-hidden="true">
+            <div style="position:absolute;top:0;right:0;width:140px;height:140px;background:rgba(124,92,252,.05);border-radius:50%;filter:blur(30px);pointer-events:none"></div>
+            <div class="skeleton-grid">
+              <div class="skeleton-row"><div class="skel-dot"></div><div class="skel-bar"></div></div>
+              <div class="skeleton-row"><div class="skel-dot"></div><div class="skel-bar"></div></div>
+              <div class="skeleton-row"><div class="skel-dot"></div><div class="skel-bar"></div></div>
+              <div class="skeleton-row"><div class="skel-dot"></div><div class="skel-bar"></div></div>
+              <div class="skeleton-row"><div class="skel-dot"></div><div class="skel-bar"></div></div>
+              <div class="skeleton-row"><div class="skel-dot"></div><div class="skel-bar"></div></div>
+              <div class="skeleton-row"><div class="skel-dot"></div><div class="skel-bar"></div></div>
+              <div class="skeleton-row"><div class="skel-dot"></div><div class="skel-bar"></div></div>
+              <div class="skeleton-row"><div class="skel-dot"></div><div class="skel-bar"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════ PLATFORM OVERVIEW ═══════════════════════════ -->
+<section class="section platform-section" id="platform" aria-labelledby="platform-heading">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow eyebrow-center" style="margin-bottom:16px">Production-ready UX</span>
+      <h2 id="platform-heading">The UX layer your agent deserves.<br><span class="gradient-text">Built for LLM-native interactions,</span><br>out of the box.</h2>
+      <p style="margin-top:12px">From planning to launching and helping users — our chat layer is prepared for new agents that start and continue with LLM-human agent flows.</p>
+    </div>
+
+    <div class="two-col">
+      <ul class="platform-bullets" role="list">
+        <li class="platform-bullet"><div class="bullet-dot" aria-hidden="true"></div><p style="margin:0">The AI layer is purpose-built for LLM-native agents. Our UX chat layer is prepared for new agents that start and continue human-agent interaction.</p></li>
+        <li class="platform-bullet"><div class="bullet-dot" aria-hidden="true"></div><p style="margin:0">No mandatory pipelines with Semantic + many custom loggers</p></li>
+        <li class="platform-bullet"><div class="bullet-dot" aria-hidden="true"></div><p style="margin:0">Contextually-loaded, multi-modal and context-driven triggers</p></li>
+        <li class="platform-bullet"><div class="bullet-dot" aria-hidden="true"></div><p style="margin:0">Real time event detection, retry, context and function triggers</p></li>
+        <li class="platform-bullet"><div class="bullet-dot" aria-hidden="true"></div><p style="margin:0">Multi-channel capable with custom notifications + preference settings</p></li>
+        <li class="platform-bullet"><div class="bullet-dot" aria-hidden="true"></div><p style="margin:0">Watch real-time data and UX LLM that reinforces UX layer behavior</p></li>
+      </ul>
+
+      <div class="plat-mockup">
+        <div class="tab-row">
+          <span class="tab-chip" style="background:rgba(124,92,252,.22)">Chat UI</span>
+          <span class="tab-chip" style="background:rgba(139,92,246,.22)">Voice</span>
+          <span class="tab-chip" style="background:rgba(99,102,241,.22)">Notifications</span>
+          <span class="tab-chip" style="background:rgba(147,51,234,.22)">Analytics</span>
+        </div>
+        <div class="plat-chat-win">
+          <div class="plat-chat-head">
+            <div class="plat-av">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M6 1C3.24 1 1 3.015 1 5.5c0 .968.324 1.868.875 2.594L1.5 10.5l2.213-.831A5.116 5.116 0 0 0 6 10C8.76 10 11 7.985 11 5.5S8.76 1 6 1Z" fill="#7C5CFC"/>
+              </svg>
+            </div>
+            <div>
+              <div class="plat-name">AI Agent</div>
+              <div class="plat-active">● Active</div>
+            </div>
+          </div>
+          <div class="plat-msgs">
+            <div class="pm-row"><div class="pm-av" aria-hidden="true"></div><div class="pm-bub-a">How can I help?</div></div>
+            <div class="pm-row pm-row-user"><div class="pm-bub-u">Show me this week's sales report</div></div>
+            <div class="pm-row"><div class="pm-av" aria-hidden="true"></div><div class="pm-bub-a">Here's your weekly summary: Revenue up 14% 📈</div></div>
+          </div>
+        </div>
+        <div class="infra-pills">
+          <div class="infra-pill"><div class="infra-pip" aria-hidden="true"></div><span>Message routing</span></div>
+          <div class="infra-pill"><div class="infra-pip" aria-hidden="true"></div><span>Retry logic</span></div>
+          <div class="infra-pill"><div class="infra-pip" aria-hidden="true"></div><span>Context store</span></div>
+          <div class="infra-pill"><div class="infra-pip" aria-hidden="true"></div><span>Function calls</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ NOTIFICATIONS ═══════════════════════════ -->
+<section class="section" aria-labelledby="notif-heading">
+  <div class="container">
+    <div class="two-col">
+
+      <!-- Left: mockup -->
+      <div class="card" style="padding:24px">
+        <p style="color:rgba(107,107,138,.7);font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.18em;margin-bottom:18px">Notification channels</p>
+        <div class="ch-grid">
+          <div class="ch-item"><span class="ch-emoji" aria-hidden="true">📱</span><span class="ch-name">Twilio</span></div>
+          <div class="ch-item"><span class="ch-emoji" aria-hidden="true">💬</span><span class="ch-name">Slack</span></div>
+          <div class="ch-item"><span class="ch-emoji" aria-hidden="true">📧</span><span class="ch-name">Email</span></div>
+          <div class="ch-item"><span class="ch-emoji" aria-hidden="true">🔗</span><span class="ch-name">Webhooks</span></div>
+        </div>
+        <div class="bar-chart" aria-label="Notification volume" role="img">
+          <div class="bar" style="height:30%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+          <div class="bar" style="height:50%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+          <div class="bar" style="height:40%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+          <div class="bar" style="height:72%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+          <div class="bar" style="height:56%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+          <div class="bar" style="height:82%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+          <div class="bar" style="height:65%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+          <div class="bar" style="height:92%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+          <div class="bar" style="height:74%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+          <div class="bar" style="height:100%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+          <div class="bar" style="height:84%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+          <div class="bar" style="height:95%;background:linear-gradient(to top,#7C5CFC,rgba(155,125,255,.18))"></div>
+        </div>
+        <div class="day-labels"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+      </div>
+
+      <!-- Right: copy -->
+      <div>
+        <span class="eyebrow" style="margin-bottom:16px;display:flex">Multi-channel notifications</span>
+        <h2 id="notif-heading">Your agent is only helpful if people <span class="gradient-text">come back to talk to it.</span></h2>
+        <div class="check-list" style="margin-top:22px">
+          <div class="check-row"><div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">More agents use per quota and tracking across all channels.</span></div>
+          <div class="check-row"><div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">CometChat is the only full-stack platform that combines LLM-native and real-time data features.</span></div>
+          <div class="check-row"><div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">Integrates with SendGrid, Twilio, or your current notification system.</span></div>
+          <div class="check-row"><div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">Understand frequency, retry logic, and user engagement.</span></div>
+          <div class="check-row"><div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">Notifications push at growth. Track by UX or pull from any system.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ ANALYTICS + INTEGRATIONS ═══════════════════════════ -->
+<section class="section integrations-section" id="integrations" aria-labelledby="analytics-heading">
+  <div class="container">
+
+    <div class="two-col" style="margin-bottom:80px">
+      <!-- Left: copy -->
+      <div>
+        <span class="eyebrow" style="margin-bottom:16px;display:flex">Shipping tools</span>
+        <h2 id="analytics-heading">Ship the agent. Then make it better. <span class="gradient-text">Without needing Mixpanel, Segment, or BI setups.</span></h2>
+        <div class="check-list" style="margin-top:22px">
+          <div class="check-row"><div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">From day one, built-in visibility into how your agent is doing.</span></div>
+          <div class="check-row"><div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">Full message delivery, parsed and ranking stats</span></div>
+          <div class="check-row"><div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">Manage conversations, prompt quality and campaign engagement</span></div>
+          <div class="check-row"><div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">Automate retries, prompts and custom user engagement</span></div>
+          <div class="check-row"><div class="check-dot"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#7C5CFC" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">Exportable, filterable, and privacy respecting.</span></div>
+        </div>
+      </div>
+
+      <!-- Right: analytics card -->
+      <div class="card" style="padding:20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+          <span style="color:#fff;font-size:14px;font-weight:600;font-family:'Syne',sans-serif">Agent Analytics</span>
+          <span style="color:var(--c-purple);font-size:11px;font-family:'JetBrains Mono',monospace">Last 7 days</span>
+        </div>
+        <div class="stats-2x2">
+          <div class="stat-tile"><div class="stat-label">Messages</div><div class="stat-val">124K</div><div class="stat-change">+18%</div></div>
+          <div class="stat-tile"><div class="stat-label">Sessions</div><div class="stat-val">8.4K</div><div class="stat-change">+11%</div></div>
+          <div class="stat-tile"><div class="stat-label">Resolution</div><div class="stat-val">91%</div><div class="stat-change">+4%</div></div>
+          <div class="stat-tile"><div class="stat-label">Satisfaction</div><div class="stat-val">4.8/5</div><div class="stat-change">+0.3</div></div>
+        </div>
+        <div class="chart-area">
+          <svg viewBox="0 0 300 80" preserveAspectRatio="none" aria-label="Analytics trend — upward" role="img">
+            <defs>
+              <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#7C5CFC" stop-opacity=".38"/>
+                <stop offset="100%" stop-color="#7C5CFC" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M0 64 C35 54,65 36,100 39 S154 23,188 27 S244 9,300 3 V80 H0 Z" fill="url(#cg)"/>
+            <path d="M0 64 C35 54,65 36,100 39 S154 23,188 27 S244 9,300 3" fill="none" stroke="#7C5CFC" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Integration logos -->
+    <div style="text-align:center;margin-bottom:32px">
+      <span class="eyebrow eyebrow-center" style="margin-bottom:12px">Integrations</span>
+      <h3 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-top:8px">Connect your entire stack</h3>
+    </div>
+    <div class="int-grid">
+      <div class="int-tile"><div class="int-initial">O</div><span class="int-name">OpenAI</span></div>
+      <div class="int-tile"><div class="int-initial">A</div><span class="int-name">Anthropic</span></div>
+      <div class="int-tile"><div class="int-initial">G</div><span class="int-name">Gemini</span></div>
+      <div class="int-tile"><div class="int-initial">T</div><span class="int-name">Twilio</span></div>
+      <div class="int-tile"><div class="int-initial">S</div><span class="int-name">SendGrid</span></div>
+      <div class="int-tile"><div class="int-initial">S</div><span class="int-name">Slack</span></div>
+      <div class="int-tile"><div class="int-initial">S</div><span class="int-name">Segment</span></div>
+      <div class="int-tile"><div class="int-initial">M</div><span class="int-name">Mixpanel</span></div>
+      <div class="int-tile"><div class="int-initial">A</div><span class="int-name">AWS</span></div>
+      <div class="int-tile"><div class="int-initial">S</div><span class="int-name">Stripe</span></div>
+      <div class="int-tile"><div class="int-initial">Z</div><span class="int-name">Zapier</span></div>
+      <div class="int-tile"><div class="int-initial">H</div><span class="int-name">HubSpot</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════ PLUG IN YOUR LOGIC ═══════════════════════════ -->
+<section class="section" aria-labelledby="plugin-heading">
+  <div class="container">
+    <div class="insights-banner">
+      <div class="banner-glow" aria-hidden="true"></div>
+      <div class="banner-orb"  aria-hidden="true"></div>
+      <div class="banner-icon" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <path d="M14 3C7.925 3 3 7.925 3 14s4.925 11 11 11 11-4.925 11-11S20.075 3 14 3Z" stroke="#7C5CFC" stroke-width="1.5"/>
+          <path d="M14 8v6l4 4" stroke="#7C5CFC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="banner-content">
+        <h2 id="plugin-heading">Plug in your logic.<br><span class="gradient-text">We'll build it here.</span></h2>
+        <p style="margin-top:12px;font-size:15px">Two paths. Same full-stack experience.</p>
+        <div class="path-cards">
+          <div class="path-card">
+            <div class="path-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path d="M9 2L2 6v6l7 4 7-4V6L9 2Z" stroke="#9B7DFF" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <h3>BYOB — Bring Your Own (Agent) Brain</h3>
+            <ul class="path-list" role="list">
+              <li class="path-item"><span class="path-arrow">→</span><span>Plug into CometChat's full UI, chat infrastructure, and analytics</span></li>
+              <li class="path-item"><span class="path-arrow">→</span><span>Maintain your full LLM and agent logic responsibility, and brain control</span></li>
+            </ul>
+          </div>
+          <div class="path-card">
+            <div class="path-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <rect x="2" y="2" width="14" height="14" rx="3" stroke="#9B7DFF" stroke-width="1.5"/>
+                <path d="M6 9h6M9 6v6" stroke="#9B7DFF" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3>Build Inside CometChat</h3>
+            <ul class="path-list" role="list">
+              <li class="path-item"><span class="path-arrow">→</span><span>Integrated Agent Builder, memory, tools, and RAG</span></li>
+              <li class="path-item"><span class="path-arrow">→</span><span>One setup, one drop — all from a single platform</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ DEVELOPER TOOLS ═══════════════════════════ -->
+<section class="section dev-section" id="developers" aria-labelledby="dev-heading">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow eyebrow-center" style="margin-bottom:16px">One integration option</span>
+      <h2 id="dev-heading">Your launch, your way. <span class="gradient-text">Done right.</span></h2>
+      <p style="margin-top:12px">Start with what gets you to production fastest — or maximize your needs the deep. Ship it out, or level it up later.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-dots">
+        <div class="code-dot" style="background:#ef4444;opacity:.75"></div>
+        <div class="code-dot" style="background:#eab308;opacity:.75"></div>
+        <div class="code-dot" style="background:#22c55e;opacity:.75"></div>
+        <span class="code-filename">agent.config.ts</span>
+      </div>
+      <pre><code><span style="color:#9B7DFF">import</span> <span style="color:#E2E2F0">{ CometChat }</span> <span style="color:#9B7DFF">from</span> <span style="color:#86efac">'@cometchat/chat-sdk'</span><span style="color:#6B6B8A">;</span>
+
+<span style="color:#9B7DFF">const</span> <span style="color:#E2E2F0">agent</span> <span style="color:#6B6B8A">=</span> <span style="color:#9B7DFF">await</span> <span style="color:#E2E2F0">CometChat</span><span style="color:#6B6B8A">.</span><span style="color:#7C5CFC">createAgent</span><span style="color:#6B6B8A">({</span>
+  <span style="color:#93c5fd">model</span><span style="color:#6B6B8A">:</span>         <span style="color:#86efac">'gpt-4o'</span><span style="color:#6B6B8A">,</span>
+  <span style="color:#93c5fd">notifications</span><span style="color:#6B6B8A">:</span> <span style="color:#fb923c">true</span><span style="color:#6B6B8A">,</span>
+  <span style="color:#93c5fd">analytics</span><span style="color:#6B6B8A">:</span>     <span style="color:#fb923c">true</span><span style="color:#6B6B8A">,</span>
+  <span style="color:#93c5fd">channels</span><span style="color:#6B6B8A">:     [</span><span style="color:#86efac">'web'</span><span style="color:#6B6B8A">,</span> <span style="color:#86efac">'mobile'</span><span style="color:#6B6B8A">,</span> <span style="color:#86efac">'slack'</span><span style="color:#6B6B8A">],</span>
+<span style="color:#6B6B8A">});</span>
+
+<span style="color:#6B6B8A">// Agent is live. Ship it. 🚀</span></code></pre>
+    </div>
+
+    <div class="tool-cards">
+      <article class="tool-card">
+        <div class="feat-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M14 2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7l-6-5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M14 2v5h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Chat Builder</h3>
+        <p style="flex:1;margin-top:6px">The fastest way to get into production. A low-code builder you can use with your agent base.</p>
+        <a href="#" class="tool-link">Try Builder →</a>
+      </article>
+      <article class="tool-card">
+        <div class="feat-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 2L2 7l10 5 10-5-10-5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>UI Kits</h3>
+        <p style="flex:1;margin-top:6px">Prebuilt React, iOS, Android components with LLM-native functionality built-in.</p>
+        <a href="#" class="tool-link">View UI Kit →</a>
+      </article>
+      <article class="tool-card">
+        <div class="feat-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 8l-4 4 4 4M17 8l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 4l-4 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>SDKs &amp; APIs</h3>
+        <p style="flex:1;margin-top:6px">Deep access to every layer. Build completely custom experiences with full control.</p>
+        <a href="#" class="tool-link">View Docs →</a>
+      </article>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FINAL CTA ═══════════════════════════ -->
+<section class="section" aria-labelledby="cta-heading">
+  <div class="container">
+    <div class="cta-wrap">
+      <div class="cta-card">
+        <div class="cta-glow" aria-hidden="true"></div>
+        <div class="cta-orb"  aria-hidden="true"></div>
+        <div class="cta-logo" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path d="M14 4C8.477 4 4 8.238 4 13.5c0 2.578 1.13 4.9 2.933 6.55L6 24l4.7-1.967A10.218 10.218 0 0 0 14 23c5.523 0 10-4.238 10-9.5S19.523 4 14 4Z" fill="white"/>
+          </svg>
+        </div>
+        <h2 id="cta-heading">You don't need to build it<br><span class="gradient-text">all to ship it all</span></h2>
+        <p style="margin-top:14px">Start with what you have. Build fast, scale smoothly, and focus on what your agent does — not what it's missing.</p>
+        <div class="cta-btns">
+          <a href="/signup" class="btn btn-primary btn-cta-p">
+            Start building free
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2.5 7h9M8.5 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="/contact" class="btn btn-outline btn-cta-o">Talk to us</a>
+        </div>
+        <div class="trust-row">
+          <div class="trust-item">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M10 3L5 8.5 2 5.5" stroke="#7C5CFC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            No credit card required
+          </div>
+          <div class="trust-item">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M10 3L5 8.5 2 5.5" stroke="#7C5CFC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Free tier forever
+          </div>
+          <div class="trust-item">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M10 3L5 8.5 2 5.5" stroke="#7C5CFC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Production-ready in minutes
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer class="footer" aria-label="Site footer">
+  <div class="container">
+    <div class="footer-grid">
+
+      <!-- Brand -->
+      <div>
+        <a href="/" class="footer-logo" aria-label="CometChat Home">
+          <div class="logo-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2C4.686 2 2 4.462 2 7.5c0 1.547.677 2.94 1.76 3.93L3 14l2.82-1.18A6.13 6.13 0 0 0 8 13c3.314 0 6-2.462 6-5.5S11.314 2 8 2Z" fill="white"/>
+            </svg>
+          </div>
+          <span class="logo-text">cometchat</span>
+        </a>
+        <p class="footer-desc">Full-stack AI agent platform for production-ready teams.</p>
+        <nav aria-label="Social media" class="footer-socials">
+          <a href="#" class="soc-btn" aria-label="Twitter">T</a>
+          <a href="#" class="soc-btn" aria-label="GitHub">G</a>
+          <a href="#" class="soc-btn" aria-label="LinkedIn">L</a>
+          <a href="#" class="soc-btn" aria-label="Discord">D</a>
+        </nav>
+      </div>
+
+      <!-- Product -->
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul class="footer-links" role="list">
+          <li><a href="#">Chat UI Kit</a></li>
+          <li><a href="#">Agent Builder</a></li>
+          <li><a href="#">Notifications</a></li>
+          <li><a href="#">Analytics</a></li>
+          <li><a href="#">Voice &amp; Video</a></li>
+          <li><a href="#">Real-time DB</a></li>
+        </ul>
+      </div>
+
+      <!-- Solutions -->
+      <div class="footer-col">
+        <h4>Solutions</h4>
+        <ul class="footer-links" role="list">
+          <li><a href="#">Customer Support</a></li>
+          <li><a href="#">Health Apps</a></li>
+          <li><a href="#">Education</a></li>
+          <li><a href="#">E-commerce</a></li>
+          <li><a href="#">Enterprise</a></li>
+          <li><a href="#">Startups</a></li>
+        </ul>
+      </div>
+
+      <!-- Developers -->
+      <div class="footer-col">
+        <h4>Developers</h4>
+        <ul class="footer-links" role="list">
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">API Reference</a></li>
+          <li><a href="#">SDK Downloads</a></li>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">Status</a></li>
+          <li><a href="#">Community</a></li>
+        </ul>
+      </div>
+
+      <!-- Company -->
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul class="footer-links" role="list">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Partners</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 CometChat Inc. All rights reserved.</p>
+      <nav aria-label="Legal links">
+        <ul class="legal-links" role="list">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">GDPR</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
