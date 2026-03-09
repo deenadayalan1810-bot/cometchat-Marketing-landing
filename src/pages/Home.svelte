@@ -1,4 +1,4 @@
-<script>
+﻿<script>
   import Navbar           from '../components/sections/Navbar.svelte'
   import Hero             from '../components/sections/Hero.svelte'
   import Logos            from '../components/sections/Logos.svelte'
@@ -16,7 +16,7 @@
 </script>
 
 <div class="relative min-h-screen overflow-x-hidden bg-brand-dark">
-  <!-- Persistent ambient glow — subtle purple bloom at the very top -->
+  <!-- Persistent ambient glow â€” subtle purple bloom at the very top -->
   <div class="fixed top-0 inset-x-0 h-[1px] bg-brand-purple/20 z-50 pointer-events-none"
        aria-hidden="true"></div>
   <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px]
@@ -40,3 +40,4 @@
 
   <Footer />
 </div>
+

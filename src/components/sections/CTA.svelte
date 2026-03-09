@@ -1,4 +1,4 @@
-<script>
+﻿<script>
   import CTAImg from '../../assets/images/CTAImg.png'
   import Ellipse from '../../assets/images/Ellipse.png'
 </script>
@@ -149,3 +149,4 @@
     }
   }
 </style>
+

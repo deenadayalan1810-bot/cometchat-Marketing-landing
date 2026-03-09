@@ -1,4 +1,4 @@
-<script>
+﻿<script>
   export let href      = '/'
   export let label     = 'CometChat Home'
   export let className = ''
@@ -10,3 +10,4 @@
     comet<b>chat</b>
   </span>
 </a>
+

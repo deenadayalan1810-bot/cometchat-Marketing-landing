@@ -1,4 +1,4 @@
-<script>
+﻿<script>
   import { ICONS, getIconMeta } from '../../lib/icons.js'
 
   /** @type {string} Icon name from the ICONS registry */
@@ -24,3 +24,4 @@
 >
   {@html path}
 </svg>
+

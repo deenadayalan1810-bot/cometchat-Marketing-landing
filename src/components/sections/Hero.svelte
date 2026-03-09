@@ -1,4 +1,4 @@
-<script>
+﻿<script>
   import Icon       from '../ui/Icon.svelte'
   import headIcon from '../../assets/images/Profile.png'
   import heroImage from '../../assets/images/hero-chat-preview.png'
@@ -11,21 +11,21 @@
          aria-labelledby="hero-heading">
 
   <!-- Hero glow -->
-  <div class="absolute inset-0 bg-hero-glow pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
   <div class="glow-orb top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2
-              w-[600px] h-[600px] bg-brand-purple/10"
+              w-[600px] h-[600px]"
        aria-hidden="true"></div>
 
   <div class="relative z-10 max-w-7xl mx-auto mt-10">
     <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
 
-      <!-- ── Left: Copy ────────────────────────────────────────── -->
+      <!-- â”€â”€ Left: Copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <div class="flex-1 text-center lg:text-left max-w-xl mx-auto lg:mx-0">
 
         <!-- Badge pill -->
         <div class="inline-flex items-center gap-2 mb-6
                     px-3 py-1.5 rounded-full
-                    border border-brand-purple/30 bg-brand-purple/10
+                    border border-brand-purple/30
                     text-brand-violet text-xs font-mono tracking-wide">
           <img
             src={headIcon}
@@ -72,7 +72,7 @@
         </p>
       </div>
 
-      <!-- ── Right: Chat mockup ─────────────────────────────────── -->
+      <!-- â”€â”€ Right: Chat mockup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <div class="flex-1 w-full max-w-sm sm:max-w-md lg:max-w-[420px] mx-auto lg:mx-0 lg:ml-auto">
         <div class="relative animate-float">
           <img
@@ -91,3 +91,4 @@
     </div>
   </div>
 </section>
+

@@ -1,4 +1,4 @@
-<script>
+﻿<script>
   import CardIcon1 from '../../assets/images/cardIcon1.png'
   import CardIcon2 from '../../assets/images/cardIcon2.png'
   import CardIcon3 from '../../assets/images/cardIcon3.png'
@@ -33,7 +33,7 @@
   class="relative overflow-hidden px-4 pb-24 pt-12 sm:px-6 lg:px-8"
   aria-labelledby="integration-heading"
 >
-  <div class="absolute inset-0 bg-hero-glow pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
   <div
     class="glow-orb left-1/2 top-24 h-[420px] w-[420px] -translate-x-1/2 bg-brand-purple/12"
     aria-hidden="true"
@@ -108,3 +108,4 @@
     </div>
   </div>
 </section>
+

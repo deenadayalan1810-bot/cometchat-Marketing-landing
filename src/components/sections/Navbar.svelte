@@ -1,4 +1,4 @@
-<script>
+﻿<script>
   import Logo   from '../layout/Logo.svelte'
   import Icon   from '../ui/Icon.svelte'
   import { NAV_LINKS } from '../../lib/data.js'
@@ -75,3 +75,4 @@
     </div>
   {/if}
 </header>
+

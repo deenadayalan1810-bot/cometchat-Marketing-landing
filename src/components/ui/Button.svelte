@@ -1,4 +1,4 @@
-<script>
+﻿<script>
   /** 'primary' | 'outline' */
   export let variant = 'primary'
   export let href    = '#'
@@ -11,3 +11,4 @@
 >
   <slot />
 </a>
+

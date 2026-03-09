@@ -1,4 +1,4 @@
-<script>
+﻿<script>
   import CourseMain from '../../assets/images/courseMain.png'
   import CourseIcon from '../../assets/images/courseIcon.png'
   import CourseIcon2 from '../../assets/images/courseIcon (2).png'
@@ -35,7 +35,7 @@
   class="relative overflow-hidden px-4 pb-20 pt-10 sm:px-6 lg:px-8"
   aria-labelledby="fullstack-experience-heading"
 >
-  <div class="absolute inset-0 bg-hero-glow pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
   <div
     class="glow-orb left-1/2 top-20 h-[380px] w-[380px] -translate-x-1/2 bg-brand-purple/15"
     aria-hidden="true"
@@ -103,3 +103,4 @@
     </div>
   </div>
 </section>
+

@@ -18,9 +18,9 @@
          aria-labelledby="notifications-heading">
 
   <!-- Hero glow -->
-  <div class="absolute inset-0 bg-hero-glow pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
   <div class="glow-orb top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2
-              w-[600px] h-[600px] bg-brand-purple/10"
+              w-[600px] h-[600px]"
        aria-hidden="true"></div>
 
   <div class="relative z-10 max-w-7xl mx-auto mt-10">
@@ -75,3 +75,4 @@
 
 
       
+
