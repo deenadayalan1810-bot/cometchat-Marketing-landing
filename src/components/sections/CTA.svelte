@@ -3,7 +3,7 @@
   import Ellipse from '../../assets/images/Ellipse.png'
 </script>
 
-<section id="pricing" class="relative overflow-hidden pb-8 pt-6" aria-labelledby="cta-heading">
+<section id="pricing" class="relative overflow-hidden pt-6" aria-labelledby="cta-heading">
 
   <div class="cta-shell relative z-10 w-full overflow-hidden rounded-none bg-[#03030B] pb-14 pt-12 sm:pb-20 sm:pt-14">
     <div class="relative z-30 mx-auto flex w-full max-w-[110px] items-center justify-center sm:max-w-[118px]">

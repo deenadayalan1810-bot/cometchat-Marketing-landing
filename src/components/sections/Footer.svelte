@@ -132,7 +132,7 @@
   }
 </script>
 
-<footer class="border-t border-brand-border/40 bg-[#03030B] px-4 sm:px-6 lg:px-8 pt-20 pb-8" aria-label="Site footer">
+<footer class="bg-[#03030B] px-4 sm:px-6 lg:px-8 pt-20 pb-8" aria-label="Site footer">
   <div class="w-full">
     <div class="mb-9">
       <a href="/" class="inline-block text-white font-body font-600 text-[28px] leading-none tracking-[-0.03em]">

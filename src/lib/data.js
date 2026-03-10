@@ -24,8 +24,8 @@ export const HERO = {
   headlineSub: "Skip the plumbing.",
   body: "Why are you still stitching together chat UI, retries, multiplexing, notification pipelines, and analytics? CometChat gives you the extra frontend + infra layer. Simple. Scalable. Production-ready.",
   trustNote: "500+",
-  primaryCta: { label: "Start for free", href: "/signup" },
-  secondaryCta: { label: "View demo", href: "/demo" },
+  primaryCta: { label: "Schedule a Demo", href: "/demo" },
+  secondaryCta: { label: "Try the Agent Builder", href: "/signup" },
 };
 
 export const HERO_CHAT_MESSAGES = [

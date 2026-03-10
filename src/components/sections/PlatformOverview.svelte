@@ -46,6 +46,10 @@
             </li>
           {/each}
         </ul>
+        <p class="text-brand-subtext text-base sm:text-lg leading-relaxed
+                  mt-4 max-w-[480px] mx-auto lg:mx-0">
+          It's not just a pretty shell. it's UX that teaches trust, guid behavior, and makes your agent feel alive.
+        </p>
       
       </div>
 

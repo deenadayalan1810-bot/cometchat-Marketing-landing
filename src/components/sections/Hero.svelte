@@ -41,7 +41,7 @@
 
         <h1 id="hero-heading"
             class="font-display font-400 text-white leading-[1.08]
-                   text-3xl sm:text-5xl lg:text-[3.75rem] mb-5">
+                   text-3xl sm:text-[2.85rem] lg:text-[3.5rem] mb-5">
           {HERO.headline} <span class="gradient-text">{HERO.headspan}</span><br>
 
           <span class="gradient-text">{HERO.headlineSub}</span>
@@ -55,12 +55,12 @@
         <div class="flex flex-col sm:flex-row items-center gap-3
                     justify-center lg:justify-start">
           <a href={HERO.primaryCta.href}
-             class="btn-primary px-6 py-3 text-sm w-full sm:w-auto justify-center
-                    !shadow-lg !shadow-brand-purple/30">
+             class="btn-outline px-6 py-3 text-sm w-full sm:w-auto justify-center">
             {HERO.primaryCta.label}
           </a>
           <a href={HERO.secondaryCta.href}
-             class="btn-outline px-6 py-3 text-sm w-full sm:w-auto justify-center">
+             class="btn-primary px-6 py-3 text-sm w-full sm:w-auto justify-center
+                    !shadow-lg !shadow-brand-purple/30">
             {HERO.secondaryCta.label}
           </a>
         </div>

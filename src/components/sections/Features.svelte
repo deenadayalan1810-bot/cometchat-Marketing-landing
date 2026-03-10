@@ -22,7 +22,7 @@
 
         <h2 id="features-heading"
             class="font-display font-400 text-white leading-[1.08]
-                   text-3xl sm:text-5xl lg:text-[3.75rem] mb-5">
+                   text-3xl sm:text-[2.85rem] lg:text-[3.5rem] mb-5">
                    Everything your agent needs to go from prototype to product-fixed.
         </h2>
 

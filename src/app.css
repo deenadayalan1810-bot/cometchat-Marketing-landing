@@ -66,7 +66,7 @@
     @apply inline-flex items-center gap-2
            text-brand-purple text-xs
            font-mono font-medium
-           uppercase tracking-widest;
+           tracking-widest;
   }
   /* â”€â”€ Gradient heading text â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   .gradient-text {
