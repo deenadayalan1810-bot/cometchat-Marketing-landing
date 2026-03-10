@@ -4,9 +4,11 @@ This project is a responsive SaaS-style marketing landing page built using **Sve
 It replicates a modern marketing website layout focusing on **clean component architecture, performance, and SEO best practices**.
 
 ## Live Demo
-https://cometchat-marketing-landing.vercel.app
+
+https://cometchat-marketing-landing-demo.vercel.app/
 
 ## GitHub Repository
+
 https://github.com/deenadayalan1810-bot/cometchat-Marketing-landing
 
 ## Tech Stack
