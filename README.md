@@ -5,7 +5,7 @@ It replicates a modern marketing website layout focusing on **clean component ar
 
 ## Live Demo
 
-https://cometchat-marketing-landing-demo.vercel.app/
+https://cometchatmarketingdemo.vercel.app/
 
 ## GitHub Repository
 
