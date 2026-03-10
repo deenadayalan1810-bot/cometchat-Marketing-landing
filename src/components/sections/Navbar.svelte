@@ -36,7 +36,7 @@
       </a>
       <a href="/signup"
          class="btn-primary !text-xs !px-4 !py-2 !rounded-lg">
-        Start for free
+        Schedule a Demo
       </a>
     </div>
 
