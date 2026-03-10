@@ -26,7 +26,6 @@
   <div class="relative z-10 max-w-7xl mx-auto mt-10">
     <div class="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
 
-      <!-- â”€â”€ Left: Copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
       <div class="flex-1 text-center lg:text-left max-w-xl mx-auto lg:mx-0">
 
         <SectionLabel centered={true} className="mb-4 block">Production-ready chat UI</SectionLabel>
