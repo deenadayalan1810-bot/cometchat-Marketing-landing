@@ -1,5 +1,4 @@
 ﻿<script>
-  import Icon       from '../ui/Icon.svelte'
   import headIcon from '../../assets/images/Profile.png'
   import heroImage from '../../assets/images/hero-chat-preview.png'
   import { HERO } from '../../lib/data.js'
@@ -59,7 +58,6 @@
              class="btn-primary px-6 py-3 text-sm w-full sm:w-auto justify-center
                     !shadow-lg !shadow-brand-purple/30">
             {HERO.primaryCta.label}
-            <Icon name="arrow-right" size={14} />
           </a>
           <a href={HERO.secondaryCta.href}
              class="btn-outline px-6 py-3 text-sm w-full sm:w-auto justify-center">

@@ -4,12 +4,11 @@
   import SectionLabel   from '../ui/SectionLabel.svelte'
 
   const points = [
-    'Product use data. Measure everything that matters.',
+    'Resolution rates, falback frequency into what your agent is doing - and how people are responding.',
     'See usage breakdowns, prompt paths, funnel drop-offs.',
     'Observe how users interact with your agent.',
-    'Share outcomes and feedback loops.',
-    'Repeatable, flexible, and privacy respectful.',
-    'You wonâ€™t outgrow what you start with. When you grow deeper.'
+    'Sentiment markers and feedback loops.',
+    'Exportable, filterable, and privacy-respectful.'
     ]
 </script>
 
@@ -39,7 +38,7 @@
         </h2>
         <p class="text-brand-subtext text-base sm:text-lg leading-relaxed
                   mb-4 max-w-[480px] mx-auto lg:mx-0">
-          When you ship your agent youâ€™ll inevitably ask whatâ€™s working and where to improve.
+          From day one, you get built-in visibility into what your agent is doing - and how people are responding
         </p>
         <ul class="space-y-3">
           {#each points as point}
@@ -51,7 +50,7 @@
         </ul>
         <p class="text-brand-subtext text-base sm:text-lg leading-relaxed
                   mt-4 max-w-[480px] mx-auto lg:mx-0">
-          Notifications arenâ€™t a growth hack. Theyâ€™re UX. And we built them to grow with you.
+          you can't improve what you cant' see. With us, you never ship blind.
         </p>
       
       </div>
